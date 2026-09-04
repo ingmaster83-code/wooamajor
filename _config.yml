@@ -1,0 +1,40 @@
+title: 우아학과 - 전국 대학교 학과정보 찾기
+description: >-
+  전국 1,900여 개교, 9만 8천여 개 학과·전공 정보를 한눈에 확인하세요.
+  학위과정, 입학정원, 졸업자수, 관련직업까지 무료로 검색할 수 있습니다.
+url: "https://wooamajor.wooahouse.com"
+baseurl: ""
+lang: ko
+timezone: Asia/Seoul
+author: WooaHouse
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - scripts/
+  - "*.py"
+  - "*.log"
+  - "*.txt"
+  - README.md
+  - .gitignore
+  - vendor/
+  - _rawdata/
+  - data/
+  - .env
+
+# 설계 메모: 전국대학별학과정보표준데이터(publicDataPk=15107737, svcTableNm=tn_pubr_public_univ_major_svc)
+# 총 101,238건(2025년 단일연도, 한국대학교육협의회 단일출처) 중 유효 98,140건, 학교 1,905개교.
+# wooapay/wooawifi와 동일한 Option-B 패턴(시도→시군구→leaf 목록형+클라이언트검색)을 채택하되,
+# leaf 단위가 "동"이 아니라 "학교"(SCHL_NM) — 학교 하나당 평균 51개 학과/학위과정을 리스트로 보여줌.
+# 좌표 없음(시군구 단위까지만) — "내 주변" 기능은 이 사이트엔 해당 없음.
+# 대학알리미(academyinfo.go.kr)가 공식 정보공시 사이트지만, 학과 단위 개별 SEO는 약할 것으로 판단.
+# 2026-09-04.

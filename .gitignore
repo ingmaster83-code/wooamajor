@@ -1,0 +1,14 @@
+_site/
+.jekyll-cache/
+.sass-cache/
+.bundle/
+vendor/
+Gemfile.lock
+scripts/__pycache__/
+__pycache__/
+*.pyc
+*.log
+.env
+
+# 원본 다운로드(재생성 가능, 용량 큼)
+_rawdata/major_raw.json

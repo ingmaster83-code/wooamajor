@@ -1,0 +1,71 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <span>{{ page.sigungu }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🎓 {{ page.doShort }} {{ page.sigungu }} 대학교·학과 정보</h1>
+    <p>총 {{ page.totalCount }}개교</p>
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <div class="wifi-toolbar">
+    <input type="text" id="sgguFilter" class="search-input" style="border:1px solid #E5E7EB;" placeholder="학교명으로 이 지역 안에서 다시 찾기...">
+  </div>
+
+  <div class="camp-grid" id="itemGrid">
+    {% for sc in page.schools %}
+    <a href="/school/{{ sc.slug | uri_escape }}/" class="camp-card" data-name="{{ sc.schoolName | escape }}">
+      <div class="camp-card-img-placeholder">🎓</div>
+      <div class="camp-card-body">
+        <div class="camp-card-name">{{ sc.schoolName }}</div>
+        <div class="camp-card-loc">📍 {{ page.doShort }} {{ page.sigungu }}</div>
+        <div class="camp-card-tags">
+          {% if sc.schoolType and sc.schoolType != "" %}<span class="tag tag-type">{{ sc.schoolType }}</span>{% endif %}
+          <span class="tag tag-type">학과 {{ sc.majorCount }}개</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  <p id="noResult" style="display:none;color:#6B7280;text-align:center;padding:20px;">검색 결과가 없습니다.</p>
+
+  <div style="margin-top:40px;background:#F9FAFB;border-radius:14px;padding:24px 28px;">
+    <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:12px;">{{ page.doShort }} {{ page.sigungu }} 대학교 정보 안내</h2>
+    <p style="color:#374151;line-height:1.8;font-size:.9375rem;">
+      {{ page.doShort }} {{ page.sigungu }} 소재 대학교·전문대학·대학원의 학과 정보를 확인할 수 있습니다.
+      학교를 선택하면 학위과정·모집정원·졸업자수·관련직업까지 자세히 볼 수 있습니다.
+    </p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+document.getElementById('sgguFilter').addEventListener('input', function (e) {
+  var q = e.target.value.trim().toLowerCase();
+  var cards = document.querySelectorAll('#itemGrid .camp-card');
+  var visible = 0;
+  cards.forEach(function (c) {
+    var name = (c.dataset.name || '').toLowerCase();
+    var match = !q || name.includes(q);
+    c.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('noResult').style.display = visible === 0 ? '' : 'none';
+});
+</script>

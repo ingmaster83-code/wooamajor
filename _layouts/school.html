@@ -1,0 +1,121 @@
+---
+layout: default
+---
+
+<div class="page-with-sidebar">
+<div class="region-page">
+
+  <nav class="breadcrumb" aria-label="위치">
+    <a href="/">홈</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/">{{ page.doShort }}</a>
+    <span>›</span>
+    <a href="/region/{{ page.doShort | uri_escape }}/{{ page.sigungu | uri_escape }}/">{{ page.sigungu }}</a>
+    <span>›</span>
+    <span>{{ page.schoolName }}</span>
+  </nav>
+
+  <div class="region-page-header">
+    <h1>🎓 {{ page.schoolName }}</h1>
+    <p>{{ page.doShort }} {{ page.sigungu }}{% if page.schoolType and page.schoolType != "" %} · {{ page.schoolType }}{% endif %} · 학과 {{ page.majorCount }}개</p>
+  </div>
+
+  <div class="ad-slot">
+    {% include ad.html %}
+  </div>
+
+  <div class="wifi-toolbar">
+    <input type="text" id="majorFilter" class="search-input" style="border:1px solid #E5E7EB;" placeholder="학과명으로 찾기...">
+  </div>
+
+  {% if page.affils.size > 1 %}
+  <div class="rt-period-tabs" id="affilTabs" style="margin-bottom:16px;">
+    <button type="button" class="rt-period-btn active" data-affil="all">전체</button>
+    {% for a in page.affils %}
+    <button type="button" class="rt-period-btn" data-affil="{{ a }}">{{ a }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if page.truncated %}
+  <div style="background:#EEF2FF;border:1px solid #C7D2FE;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:.87rem;color:#3730A3;">
+    학과가 많아 상위 {{ page.majors.size }}개만 표시합니다. 검색창에서 원하는 학과를 찾아보세요.
+  </div>
+  {% endif %}
+
+  <div id="majorGrid">
+    {% for m in page.majors %}
+    <div class="major-card" data-name="{{ m.name | escape }}" data-affil="{{ m.affil | escape }}">
+      <div class="major-card-top">
+        <div class="major-card-name">{{ m.name }}</div>
+        <div class="major-card-badges">
+          {% if m.degree and m.degree != "" %}<span class="tag tag-type">{{ m.degree }}</span>{% endif %}
+          {% if m.dayNight and m.dayNight != "" %}<span class="tag tag-type">{{ m.dayNight }}</span>{% endif %}
+          {% if m.affil and m.affil != "" %}<span class="tag tag-type">{{ m.affil }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="major-card-stats">
+        {% if m.college and m.college != "" and m.college != "단과대구분없음" %}<span>🏛️ {{ m.college }}</span>{% endif %}
+        {% if m.term and m.term != "" %}<span>⏱️ 수업연한 {{ m.term }}</span>{% endif %}
+        {% if m.capacity and m.capacity != "" and m.capacity != "0" %}<span>👥 모집정원 {{ m.capacity }}명</span>{% endif %}
+        {% if m.graduates and m.graduates != "" and m.graduates != "0" %}<span>🎓 졸업자 {{ m.graduates }}명</span>{% endif %}
+      </div>
+      {% if m.careers.size > 0 %}
+      <div class="major-card-careers">
+        <span class="major-card-careers-label">💼 관련직업</span>
+        {% for c in m.careers limit:8 %}<span class="tag tag-type">{{ c }}</span>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <p id="noResult" style="display:none;color:#6B7280;text-align:center;padding:20px;">검색 결과가 없습니다.</p>
+
+  <div style="margin-top:40px;background:#F9FAFB;border-radius:14px;padding:24px 28px;">
+    <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:12px;">{{ page.schoolName }} 학과정보 안내</h2>
+    <p style="color:#374151;line-height:1.8;font-size:.9375rem;">
+      한국대학교육협의회가 제공하는 2025년 기준 데이터로, 학위과정·모집정원·졸업자수·관련직업 정보를 담고 있습니다.
+      모집정원·개편 여부 등은 매년 바뀔 수 있으니 정확한 내용은 반드시 {{ page.schoolName }}에 직접 확인하세요.
+    </p>
+  </div>
+
+</div>
+<aside class="tool-sidebar"></aside>
+</div>
+
+<script>
+var currentAffil = 'all';
+var currentQuery = '';
+
+function applyMajorFilter() {
+  var cards = document.querySelectorAll('#majorGrid .major-card');
+  var visible = 0;
+  cards.forEach(function (c) {
+    var name = (c.dataset.name || '').toLowerCase();
+    var affil = c.dataset.affil || '';
+    var matchQuery = !currentQuery || name.includes(currentQuery);
+    var matchAffil = currentAffil === 'all' || affil === currentAffil;
+    var match = matchQuery && matchAffil;
+    c.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  document.getElementById('noResult').style.display = visible === 0 ? '' : 'none';
+}
+
+document.getElementById('majorFilter').addEventListener('input', function (e) {
+  currentQuery = e.target.value.trim().toLowerCase();
+  applyMajorFilter();
+});
+
+var affilTabs = document.getElementById('affilTabs');
+if (affilTabs) {
+  affilTabs.addEventListener('click', function (e) {
+    var btn = e.target.closest('.rt-period-btn');
+    if (!btn) return;
+    affilTabs.querySelectorAll('.rt-period-btn').forEach(function (b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentAffil = btn.dataset.affil;
+    applyMajorFilter();
+  });
+}
+</script>
