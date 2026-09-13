@@ -16,13 +16,38 @@ layout: default
   </nav>
 
   <div class="region-page-header">
-    <h1>🎓 {{ page.schoolName }}</h1>
-    <p>{{ page.doShort }} {{ page.sigungu }}{% if page.schoolType and page.schoolType != "" %} · {{ page.schoolType }}{% endif %} · 학과 {{ page.majorCount }}개</p>
+    <h1>{% if page.kind == "meister" %}🔧{% else %}🎓{% endif %} {{ page.schoolName }}</h1>
+    <p>{{ page.doShort }} {{ page.sigungu }}{% if page.schoolType and page.schoolType != "" %} · {{ page.schoolType }}{% endif %}{% if page.kind != "meister" %} · 학과 {{ page.majorCount }}개{% endif %}</p>
   </div>
 
   <div class="ad-slot">
     {% include ad.html %}
   </div>
+
+  {% if page.kind == "meister" %}
+  <div style="background:#F9FAFB;border-radius:14px;padding:24px 28px;margin-bottom:24px;">
+    <p style="color:#374151;line-height:1.9;font-size:.95rem;">
+      {{ page.schoolName }}는 {{ page.doShort }} {{ page.sigungu }}에 위치한 전국 마이스터고 중 하나로,
+      {% if page.foundDate and page.foundDate != "" %}{{ page.foundDate | slice: 0, 4 }}년 개교했으며{% endif %}
+      {% if page.foundType and page.foundType != "" %}{{ page.foundType }}으로 운영됩니다.
+      {% endif %}{% if page.eduOffice and page.eduOffice != "" %}{{ page.eduOffice }} 관할입니다.{% endif %}
+    </p>
+    <table style="width:100%;margin-top:16px;border-collapse:collapse;font-size:.9rem;">
+      <tbody>
+        <tr style="border-top:1px solid #E5E7EB;"><td style="padding:10px 4px;color:#6B7280;width:100px;">📍 주소</td><td style="padding:10px 4px;">{{ page.address }}</td></tr>
+        {% if page.foundDate and page.foundDate != "" %}<tr style="border-top:1px solid #E5E7EB;"><td style="padding:10px 4px;color:#6B7280;">🏫 개교일</td><td style="padding:10px 4px;">{{ page.foundDate }}</td></tr>{% endif %}
+        {% if page.foundType and page.foundType != "" %}<tr style="border-top:1px solid #E5E7EB;"><td style="padding:10px 4px;color:#6B7280;">🏛️ 설립구분</td><td style="padding:10px 4px;">{{ page.foundType }}</td></tr>{% endif %}
+        {% if page.eduOffice and page.eduOffice != "" %}<tr style="border-top:1px solid #E5E7EB;"><td style="padding:10px 4px;color:#6B7280;">🏢 관할교육청</td><td style="padding:10px 4px;">{{ page.eduOffice }}</td></tr>{% endif %}
+      </tbody>
+    </table>
+    {% if page.lat and page.lat != "" %}
+    <a href="https://map.kakao.com/link/map/{{ page.schoolName | uri_escape }},{{ page.lat }},{{ page.lng }}" style="display:inline-block;margin-top:16px;color:#0D9488;font-weight:600;font-size:.9rem;">🗺️ 카카오맵에서 위치 보기 →</a>
+    {% endif %}
+  </div>
+  <div style="background:#EEF2FF;border:1px solid #C7D2FE;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:.87rem;color:#3730A3;">
+    학과 편성·입학전형 등 세부 정보는 학교 개별로 다르므로, {{ page.schoolName }} 공식 홈페이지 또는 <a href="https://www.hifive.go.kr/" target="_blank" style="color:#3730A3;text-decoration:underline;">특성화고·마이스터고 포털(하이파이브)</a>에서 확인하세요.
+  </div>
+  {% else %}
 
   <div class="wifi-toolbar">
     <input type="text" id="majorFilter" class="search-input" style="border:1px solid #E5E7EB;" placeholder="학과명으로 찾기...">
@@ -78,6 +103,7 @@ layout: default
       모집정원·개편 여부 등은 매년 바뀔 수 있으니 정확한 내용은 반드시 {{ page.schoolName }}에 직접 확인하세요.
     </p>
   </div>
+  {% endif %}
 
 </div>
 <aside class="tool-sidebar"></aside>
@@ -99,13 +125,17 @@ function applyMajorFilter() {
     c.style.display = match ? '' : 'none';
     if (match) visible++;
   });
-  document.getElementById('noResult').style.display = visible === 0 ? '' : 'none';
+  var noResult = document.getElementById('noResult');
+  if (noResult) noResult.style.display = visible === 0 ? '' : 'none';
 }
 
-document.getElementById('majorFilter').addEventListener('input', function (e) {
-  currentQuery = e.target.value.trim().toLowerCase();
-  applyMajorFilter();
-});
+var majorFilterInput = document.getElementById('majorFilter');
+if (majorFilterInput) {
+  majorFilterInput.addEventListener('input', function (e) {
+    currentQuery = e.target.value.trim().toLowerCase();
+    applyMajorFilter();
+  });
+}
 
 var affilTabs = document.getElementById('affilTabs');
 if (affilTabs) {

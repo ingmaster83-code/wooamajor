@@ -35,7 +35,7 @@ layout: default
         <div class="camp-card-loc">📍 {{ page.doShort }} {{ page.sigungu }}</div>
         <div class="camp-card-tags">
           {% if sc.schoolType and sc.schoolType != "" %}<span class="tag tag-type">{{ sc.schoolType }}</span>{% endif %}
-          <span class="tag tag-type">학과 {{ sc.majorCount }}개</span>
+          {% if sc.majorCount and sc.majorCount > 0 %}<span class="tag tag-type">학과 {{ sc.majorCount }}개</span>{% endif %}
         </div>
       </div>
     </a>

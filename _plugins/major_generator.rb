@@ -65,8 +65,8 @@ module Jekyll
       self.data['totalCount']  = total_count
       self.data['sigunguList'] = sigungu_list
       self.data['layout']      = 'do'
-      self.data['title']       = "#{do_short} 대학교 학과정보 #{total_count}개교"
-      self.data['description'] = "#{do_short} 지역 대학교·전문대학 #{total_count}개교의 학과 정보를 시군구별로 확인하세요."[0, 155]
+      self.data['title']       = "#{do_short} 대학교·마이스터고 정보 #{total_count}개교"
+      self.data['description'] = "#{do_short} 지역 대학교·전문대학·마이스터고 #{total_count}개교의 학과·학교 정보를 시군구별로 확인하세요."[0, 155]
     end
   end
 
@@ -84,8 +84,8 @@ module Jekyll
       self.data['totalCount'] = schools.size
       self.data['schools']    = schools.sort_by { |s| -s['majorCount'] }
       self.data['layout']     = 'sigungu'
-      self.data['title']      = "#{do_short} #{sigungu} 대학교 학과정보 #{schools.size}개교"
-      self.data['description'] = "#{do_short} #{sigungu}의 대학교·전문대학 #{schools.size}개교 학과 정보를 확인하세요."[0, 155]
+      self.data['title']      = "#{do_short} #{sigungu} 대학교·마이스터고 정보 #{schools.size}개교"
+      self.data['description'] = "#{do_short} #{sigungu}의 대학교·전문대학·마이스터고 #{schools.size}개교 정보를 확인하세요."[0, 155]
     end
   end
 
@@ -111,8 +111,21 @@ module Jekyll
       self.data['majors']       = capped
       self.data['truncated']    = majors.size > MajorPageGenerator::SCHOOL_MAJOR_CAP
       self.data['layout']       = 'school'
-      self.data['title']        = "#{school['schoolName']} 학과정보 · 입학정원 · 관련직업"
-      self.data['description']  = "#{school['schoolName']}의 학과 #{school['majorCount']}개(학위과정·모집정원·졸업자수·관련직업)를 한눈에 확인하세요."[0, 155]
+      self.data['kind']         = school['kind'] || 'univ'
+      self.data['address']      = school['address']
+      self.data['foundDate']    = school['foundDate']
+      self.data['foundType']    = school['foundType']
+      self.data['eduOffice']    = school['eduOffice']
+      self.data['lat']          = school['lat']
+      self.data['lng']          = school['lng']
+
+      if school['kind'] == 'meister'
+        self.data['title']       = "#{school['schoolName']} 위치·주소·학교정보 안내"
+        self.data['description'] = "#{school['schoolName']}의 주소·설립정보·관할 교육지원청을 확인하세요."[0, 155]
+      else
+        self.data['title']       = "#{school['schoolName']} 학과정보 · 입학정원 · 관련직업"
+        self.data['description'] = "#{school['schoolName']}의 학과 #{school['majorCount']}개(학위과정·모집정원·졸업자수·관련직업)를 한눈에 확인하세요."[0, 155]
+      end
     end
   end
 end
