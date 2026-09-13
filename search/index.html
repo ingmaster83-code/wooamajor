@@ -58,7 +58,7 @@ function doSearch() {
       <div class="camp-card-img-placeholder">🎓</div>
       <div class="camp-card-body">
         <div class="camp-card-name">${f.n}</div>
-        <div class="camp-card-loc">📍 ${f.do || ''} ${f.sg || ''} · 학과 ${f.mc}개</div>
+        <div class="camp-card-loc">📍 ${f.do || ''} ${f.sg || ''}${f.mc > 0 ? ' · 학과 ' + f.mc + '개' : ''}</div>
       </div>
     </a>`;
   }).join('');
