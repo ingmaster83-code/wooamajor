@@ -1,6 +1,49 @@
 require 'json'
 
 module Jekyll
+  # 한국장학재단 대학별 평균등록금 (scripts/process_tuition.py 산출물)
+  module TuitionData
+    def self.load(site, name)
+      path = File.join(site.source, '_rawdata', name)
+      return nil unless File.exist?(path)
+      JSON.parse(File.read(path, encoding: 'utf-8'))
+    rescue => e
+      Jekyll.logger.warn "TuitionData:", "#{name} 로드 실패: #{e.message}"
+      nil
+    end
+
+    def self.by_school(site)
+      @by_school ||= (load(site, 'tuition_by_school.json') || {})
+    end
+  end
+
+  class TuitionGenerator < Generator
+    safe true
+    priority :low
+
+    def generate(site)
+      defs = TuitionData.load(site, 'tuition_pages.json') || []
+      defs.each { |d| site.pages << TuitionPage.new(site, d) }
+      Jekyll.logger.info "TuitionGenerator:", "등록금 페이지 #{defs.size}개"
+    end
+  end
+
+  class TuitionPage < Page
+    def initialize(site, d)
+      @site = site
+      @base = site.source
+      @dir  = d['path'].sub(%r{\A/}, '').sub(%r{/\z}, '')
+      @name = 'index.html'
+
+      self.process(@name)
+      self.read_yaml(File.join(@base, '_layouts'), "#{d['layout']}.html")
+      d['data'].each { |k, v| self.data[k] = v }
+      self.data['layout']      = d['layout']
+      self.data['title']       = d['title']
+      self.data['description'] = d['description']
+    end
+  end
+
   class MajorPageGenerator < Generator
     safe true
     priority :normal
@@ -111,6 +154,11 @@ module Jekyll
       self.data['majors']       = capped
       self.data['truncated']    = majors.size > MajorPageGenerator::SCHOOL_MAJOR_CAP
       self.data['layout']       = 'school'
+      tui = TuitionData.by_school(site)[school['slug']]
+      if tui
+        self.data['tuitionUrl']  = tui['url']
+        self.data['tuitionText'] = tui['text']
+      end
       self.data['kind']         = school['kind'] || 'univ'
       self.data['address']      = school['address']
       self.data['foundDate']    = school['foundDate']

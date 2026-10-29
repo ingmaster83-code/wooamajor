@@ -49,6 +49,12 @@ layout: default
   </div>
   {% else %}
 
+  {% if page.tuitionUrl %}
+  <a href="{{ page.tuitionUrl | uri_escape }}" style="display:block;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:.92rem;color:#065F46;text-decoration:none;">
+    💰 <b>{{ page.tuitionText }}</b> — 입학금·전국 순위 보기 →
+  </a>
+  {% endif %}
+
   <div class="wifi-toolbar">
     <input type="text" id="majorFilter" class="search-input" style="border:1px solid #E5E7EB;" placeholder="학과명으로 찾기...">
   </div>
